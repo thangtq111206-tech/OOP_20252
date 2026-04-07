@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import com.example.oop_20252.view.TreePanel?>
+<?import com.example.oop_20252.view.CodePanel?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.oop_20252.controller.VisualizationController"
+            stylesheets="@app.css"
+            styleClass="vis-root">
+
+    <top>
+        <HBox styleClass="vis-header" spacing="16.0">
+            <Button fx:id="btnBack" text="← Main menu" onAction="#onBack" styleClass="button-back"/>
+            <Label fx:id="titleLabel" text="Visualization" styleClass="vis-title"/>
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane orientation="HORIZONTAL" dividerPositions="0.52" styleClass="vis-split">
+            <items>
+                <VBox styleClass="vis-left-column" spacing="14.0">
+                    <VBox styleClass="panel-card" spacing="10.0">
+                        <Label text="Operation &amp; parameters" styleClass="panel-card-title"/>
+                        <GridPane styleClass="form-grid" hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="42"/>
+                                <ColumnConstraints percentWidth="58"/>
+                            </columnConstraints>
+                            <Label text="Operation" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="operationChoice" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label text="Parent (Generic only)" styleClass="form-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <TextField fx:id="parentValueField" promptText="optional" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <Label text="Value / old / search" styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <TextField fx:id="valueField" promptText="integer" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <Label text="New value (Update)" styleClass="form-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <TextField fx:id="newValueField" promptText="integer" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                            <Label text="Traverse" styleClass="form-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="traverseChoice" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </VBox>
+
+                    <Button fx:id="btnRun" text="Run operation" onAction="#onRun" maxWidth="Infinity" styleClass="button-run"/>
+
+                    <VBox styleClass="tree-panel-wrap" spacing="0">
+                        <TreePanel fx:id="treePanel" prefHeight="520" prefWidth="560"/>
+                    </VBox>
+                </VBox>
+
+                <VBox styleClass="vis-right-column" spacing="12.0">
+                    <VBox styleClass="panel-card" spacing="8.0">
+                        <Label text="Status" styleClass="panel-card-title"/>
+                        <Label fx:id="statusLabel" text="" styleClass="status-label"/>
+                    </VBox>
+
+                    <VBox styleClass="panel-card" spacing="8.0">
+                        <Label text="Traversal / visited order" styleClass="panel-card-title"/>
+                        <Label fx:id="traversalOrderLabel" text="(empty)" wrapText="true" maxWidth="430" styleClass="traversal-order"/>
+                        <Label text="Cyan = current step · Green = already visited" styleClass="legend-label"/>
+                    </VBox>
+
+                    <VBox styleClass="panel-card" spacing="8.0" VBox.vgrow="ALWAYS">
+                        <Label text="Pseudocode" styleClass="panel-card-title"/>
+                        <CodePanel fx:id="codePanel" VBox.vgrow="ALWAYS"/>
+                    </VBox>
+                </VBox>
+            </items>
+        </SplitPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="playback-bar" spacing="12.0" alignment="CENTER_LEFT">
+            <Button fx:id="btnPause" text="Pause" onAction="#onPause" styleClass="button-playback"/>
+            <Button fx:id="btnContinue" text="Continue" onAction="#onContinue" styleClass="button-playback button-primary-outline"/>
+            <Button fx:id="btnStepBack" text="Step ←" onAction="#onStepBack" styleClass="button-playback"/>
+            <Button fx:id="btnStepForward" text="Step →" onAction="#onStepForward" styleClass="button-playback"/>
+
+            <Separator orientation="VERTICAL"/>
+
+            <Button fx:id="btnUndo" text="Undo" onAction="#onUndo" styleClass="button-playback"/>
+            <Button fx:id="btnRedo" text="Redo" onAction="#onRedo" styleClass="button-playback"/>
+
+            <Separator orientation="VERTICAL"/>
+
+            <VBox spacing="4.0">
+                <Label text="Speed (ms)" styleClass="panel-card-sub"/>
+                <Slider fx:id="speedSlider" min="100" max="1200" value="550" showTickMarks="false" styleClass="speed-slider"/>
+            </VBox>
+
+            <ProgressBar fx:id="progressBar" prefWidth="280" progress="0.0" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+        </HBox>
+    </bottom>
+</BorderPane>

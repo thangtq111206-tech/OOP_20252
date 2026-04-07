@@ -1,4 +1,4 @@
-package com.example.oop_20252;
+package com.example.oop_20252.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

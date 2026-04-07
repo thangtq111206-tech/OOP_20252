@@ -1,0 +1,286 @@
+/*
+ * Tree Visualization — shared theme
+ * Loaded from FXML: stylesheets="@app.css" on main-menu.fxml and visualization.fxml roots.
+ * Optional programmatic attach: com.example.oop_20252.util.FxStyles.applyAppStylesheet(Scene)
+ */
+
+.root {
+    -fx-font-family: "Segoe UI", "Inter", system-ui, sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: linear-gradient(to bottom, #f0f4ff 0%, #e8ecf5 45%, #eef1f8 100%);
+}
+
+/* ----- Main menu ----- */
+.main-menu-root {
+    -fx-padding: 32 40 40 40;
+    -fx-spacing: 24;
+    -fx-alignment: center;
+}
+
+.main-menu-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+.main-menu-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+    -fx-max-width: 520;
+}
+
+.main-menu-card {
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-background-radius: 12;
+    -fx-padding: 20 28 24 28;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.12), 16, 0.2, 0, 4);
+}
+
+.main-menu-tree-row {
+    -fx-spacing: 14;
+    -fx-alignment: center;
+}
+
+.main-menu-bar {
+    -fx-background-color: rgba(255, 255, 255, 0.85);
+    -fx-background-radius: 8;
+    -fx-padding: 0 8 0 8;
+}
+
+.button-tree-choice {
+    -fx-min-width: 168;
+    -fx-min-height: 44;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-background-color: linear-gradient(to bottom, #4f46e5, #4338ca);
+    -fx-text-fill: white;
+}
+
+.button-tree-choice:hover {
+    -fx-background-color: linear-gradient(to bottom, #6366f1, #4f46e5);
+}
+
+.button-tree-choice:pressed {
+    -fx-background-color: #3730a3;
+}
+
+.button-quit {
+    -fx-min-width: 120;
+    -fx-background-color: #fee2e2;
+    -fx-text-fill: #991b1b;
+    -fx-background-radius: 8;
+    -fx-border-color: #fecaca;
+    -fx-border-radius: 8;
+}
+
+.button-quit:hover {
+    -fx-background-color: #fecaca;
+}
+
+/* ----- Visualization ----- */
+.vis-root {
+    -fx-background-color: #f1f5f9;
+}
+
+.vis-header {
+    -fx-spacing: 16;
+    -fx-alignment: center-left;
+    -fx-padding: 14 20 14 20;
+    -fx-background-color: linear-gradient(to right, #1e293b, #334155);
+}
+
+.vis-header .label {
+    -fx-text-fill: #f8fafc;
+}
+
+.vis-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.button-back {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(255, 255, 255, 0.35);
+    -fx-border-radius: 8;
+}
+
+.button-back:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.28);
+}
+
+.split-pane > .split-pane-divider {
+    -fx-background-color: #cbd5e1;
+    -fx-padding: 0 8 0 8;
+}
+
+.vis-left-column {
+    -fx-spacing: 14;
+    -fx-padding: 16 18 18 18;
+}
+
+.vis-right-column {
+    -fx-spacing: 12;
+    -fx-padding: 16 18 18 18;
+}
+
+.panel-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-padding: 14 16 16 16;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.08), 12, 0 0 2);
+}
+
+.panel-card-title {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #475569;
+}
+
+.panel-card-sub {
+    -fx-font-size: 11px;
+    -fx-text-fill: #64748b;
+}
+
+.form-grid {
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+}
+
+.form-label {
+    -fx-text-fill: #334155;
+}
+
+.text-field, .combo-box {
+    -fx-background-radius: 8;
+}
+
+.button-run {
+    -fx-min-height: 44;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-background-color: linear-gradient(to bottom, #059669, #047857);
+    -fx-text-fill: white;
+}
+
+.button-run:hover {
+    -fx-background-color: linear-gradient(to bottom, #10b981, #059669);
+}
+
+.tree-panel-wrap {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-padding: 8;
+}
+
+.status-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #0f172a;
+    -fx-wrap-text: true;
+}
+
+.traversal-order {
+    -fx-font-family: "Consolas", "Cascadia Code", monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: #0f172a;
+}
+
+.legend-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #64748b;
+}
+
+.playback-bar {
+    -fx-spacing: 12;
+    -fx-alignment: center-left;
+    -fx-padding: 12 16 14 16;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1 0 0 0;
+}
+
+.playback-bar .button {
+    -fx-background-radius: 8;
+    -fx-padding: 8 14 8 14;
+}
+
+.button-primary-outline {
+    -fx-background-color: #eff6ff;
+    -fx-text-fill: #1d4ed8;
+    -fx-border-color: #bfdbfe;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.button-primary-outline:hover {
+    -fx-background-color: #dbeafe;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: linear-gradient(to right, #6366f1, #4f46e5);
+    -fx-background-radius: 4;
+}
+
+.progress-bar > .track {
+    -fx-background-color: #e2e8f0;
+    -fx-background-radius: 4;
+}
+
+/* Code panel — line labels styled in CSS; highlight toggled in Java */
+.code-panel {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.code-line {
+    -fx-font-family: "Consolas", "Cascadia Code", monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: #1e293b;
+    -fx-wrap-text: true;
+    -fx-max-width: 430px;
+}
+
+.code-line-highlight {
+    -fx-background-color: #dbeafe;
+    -fx-text-fill: #1e40af;
+    -fx-background-radius: 4;
+    -fx-padding: 2 8 2 8;
+}
+
+.tree-panel-canvas {
+    -fx-background-color: #fafbfc;
+}
+
+.vis-split {
+    -fx-background-color: transparent;
+}
+
+.button-playback {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #334155;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.button-playback:hover {
+    -fx-background-color: #e2e8f0;
+}
+
+.speed-slider .track {
+    -fx-background-color: #e2e8f0;
+    -fx-background-radius: 4;
+}
+
+.speed-slider .thumb {
+    -fx-background-color: #6366f1;
+    -fx-background-radius: 8;
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.oop_20252.controller.MainMenuController"
+      stylesheets="@app.css"
+      styleClass="main-menu-root"
+      alignment="CENTER"
+      spacing="20.0">
+
+    <Label text="Tree Visualization" styleClass="main-menu-title"/>
+    <Label text="Generic · Binary Search · Red-Black — step through insert, delete, traverse, and search with animated pseudocode."
+           styleClass="main-menu-subtitle"/>
+
+    <VBox styleClass="main-menu-card" spacing="18.0" alignment="CENTER">
+        <Label text="Choose a structure" styleClass="panel-card-title"/>
+        <HBox styleClass="main-menu-tree-row">
+            <Button fx:id="btnGeneric" text="Generic Tree" onAction="#onSelectGeneric" styleClass="button-tree-choice"/>
+            <Button fx:id="btnBinary" text="Binary Tree" onAction="#onSelectBinary" styleClass="button-tree-choice"/>
+            <Button fx:id="btnRB" text="Red-Black Tree" onAction="#onSelectRedBlack" styleClass="button-tree-choice"/>
+        </HBox>
+        <MenuBar styleClass="main-menu-bar">
+            <menus>
+                <Menu text="Help">
+                    <items>
+                        <MenuItem text="How to use" onAction="#onHelpHowToUse"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <Button fx:id="btnQuit" text="Quit" onAction="#onQuit" styleClass="button-quit"/>
+    </VBox>
+</VBox>
