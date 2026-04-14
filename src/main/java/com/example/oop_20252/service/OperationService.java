@@ -53,11 +53,38 @@ public class OperationService {
     }
 
     public OperationResult traverse(TreeKind kind, TreeSnapshot current, boolean bfs) {
-        return new OperationResult(current, List.of(new StepFrame(current, List.of(), List.of(), 0, "Traversed")), new String[]{"Traverse"}, "Traverse");
+        List<StepFrame> frames = new ArrayList<>();
+        List<Integer> visited = new ArrayList<>();
+        if (kind == TreeKind.N_ARY) {
+            MultiNode<Integer> rn = ((NaryTreeSnapshot)current).getRoot();
+            if (bfs) bfsNary(rn, current, frames, visited, null); else dfsNary(rn, current, frames, visited);
+        } else if (kind == TreeKind.RED_BLACK) {
+            RedBlackTreeSnapshot rs = (RedBlackTreeSnapshot)current;
+            if (bfs) bfsRB((RBNode<Integer>)rs.getRoot(), rs.getNil(), current, frames, visited);
+            else dfsRB((RBNode<Integer>)rs.getRoot(), rs.getNil(), current, frames, visited);
+        } else {
+            com.example.oop_20252.model.binary.BinaryNode<Integer> rn = ((BinaryTreeSnapshot)current).getRoot();
+            if (bfs) bfsBinary(rn, current, frames, visited); else dfsBinary(rn, current, frames, visited);
+        }
+        if (frames.isEmpty()) frames.add(new StepFrame(current, List.of(), List.of(), 0, "Tree is empty"));
+        return new OperationResult(current, frames, new String[]{"Traversal initialized", "Visiting nodes in order..."}, "Traverse");
     }
 
     public OperationResult search(TreeKind kind, TreeSnapshot current, int value) {
-        return new OperationResult(current, List.of(new StepFrame(current, List.of(), List.of(), 0, "Searched")), new String[]{"Search"}, "Search");
+        List<StepFrame> list = new ArrayList<>();
+        List<Integer> visited = new ArrayList<>();
+        if (kind == TreeKind.N_ARY) {
+            MultiNode<Integer> rn = ((NaryTreeSnapshot)current).getRoot();
+            bfsNary(rn, current, list, visited, value);
+        } else if (kind == TreeKind.RED_BLACK) {
+            RedBlackTreeSnapshot rs = (RedBlackTreeSnapshot)current;
+            searchBin((RBNode<Integer>)rs.getRoot(), value, current, list, visited, rs.getNil());
+        } else {
+            com.example.oop_20252.model.binary.BinaryNode<Integer> rn = ((BinaryTreeSnapshot)current).getRoot();
+            searchBin(rn, value, current, list, visited, null);
+        }
+        if (list.isEmpty()) list.add(new StepFrame(current, List.of(), List.of(), 0, "Tree is empty"));
+        return new OperationResult(current, list, new String[]{"Searching for matching value..."}, "Search");
     }
 
     // Nary
@@ -141,5 +168,91 @@ public class OperationService {
         RBTree<Integer> t = new RBTree<>();
         RBTree<Integer> copy = t.deepCopy();
         return new RedBlackTreeSnapshot((RBNode<Integer>)copy.getRoot(), copy.getNil());
+    }
+
+    private void bfsNary(MultiNode<Integer> node, TreeSnapshot snap, List<StepFrame> frames, List<Integer> visited, Integer searchTarget) {
+        if (node == null) return;
+        Queue<MultiNode<Integer>> q = new LinkedList<>();
+        q.add(node);
+        while (!q.isEmpty()) {
+            MultiNode<Integer> curr = q.poll();
+            visited.add(curr.value);
+            frames.add(new StepFrame(snap, List.of(curr.value), new ArrayList<>(visited), 0, "Visiting " + curr.value));
+            if (searchTarget != null && searchTarget.equals(curr.value)) {
+                frames.add(new StepFrame(snap, List.of(curr.value), new ArrayList<>(visited), 0, "Found " + curr.value));
+                return;
+            }
+            if (curr.children != null) q.addAll(curr.children);
+        }
+        if (searchTarget != null) frames.add(new StepFrame(snap, List.of(), new ArrayList<>(visited), 0, "Value " + searchTarget + " not found."));
+    }
+
+    private void dfsNary(MultiNode<Integer> node, TreeSnapshot snap, List<StepFrame> frames, List<Integer> visited) {
+        if (node == null) return;
+        visited.add(node.value);
+        frames.add(new StepFrame(snap, List.of(node.value), new ArrayList<>(visited), 0, "Visiting " + node.value));
+        if (node.children != null) {
+            for (MultiNode<Integer> c : node.children) dfsNary(c, snap, frames, visited);
+        }
+    }
+
+    private void bfsBinary(com.example.oop_20252.model.binary.BinaryNode<Integer> node, TreeSnapshot snap, List<StepFrame> frames, List<Integer> visited) {
+        if (node == null) return;
+        Queue<com.example.oop_20252.model.binary.BinaryNode<Integer>> q = new LinkedList<>();
+        q.add(node);
+        while (!q.isEmpty()) {
+            var curr = q.poll();
+            visited.add(curr.value);
+            frames.add(new StepFrame(snap, List.of(curr.value), new ArrayList<>(visited), 0, "Visiting " + curr.value));
+            if (curr.left != null) q.add((com.example.oop_20252.model.binary.BinaryNode<Integer>)curr.left);
+            if (curr.right != null) q.add((com.example.oop_20252.model.binary.BinaryNode<Integer>)curr.right);
+        }
+    }
+    
+    private void dfsBinary(com.example.oop_20252.model.binary.BinaryNode<Integer> node, TreeSnapshot snap, List<StepFrame> frames, List<Integer> visited) {
+        if (node == null) return;
+        visited.add(node.value);
+        frames.add(new StepFrame(snap, List.of(node.value), new ArrayList<>(visited), 0, "Visiting " + node.value));
+        dfsBinary((com.example.oop_20252.model.binary.BinaryNode<Integer>)node.left, snap, frames, visited);
+        dfsBinary((com.example.oop_20252.model.binary.BinaryNode<Integer>)node.right, snap, frames, visited);
+    }
+    
+    private void bfsRB(RBNode<Integer> node, RBNode<Integer> nil, TreeSnapshot snap, List<StepFrame> frames, List<Integer> visited) {
+        if (node == null || node == nil) return;
+        Queue<RBNode<Integer>> q = new LinkedList<>();
+        q.add(node);
+        while (!q.isEmpty()) {
+            var curr = q.poll();
+            visited.add(curr.value);
+            frames.add(new StepFrame(snap, List.of(curr.value), new ArrayList<>(visited), 0, "Visiting " + curr.value));
+            if (curr.left != null && curr.left != nil) q.add((RBNode<Integer>)curr.left);
+            if (curr.right != null && curr.right != nil) q.add((RBNode<Integer>)curr.right);
+        }
+    }
+    
+    private void dfsRB(RBNode<Integer> node, RBNode<Integer> nil, TreeSnapshot snap, List<StepFrame> frames, List<Integer> visited) {
+        if (node == null || node == nil) return;
+        visited.add(node.value);
+        frames.add(new StepFrame(snap, List.of(node.value), new ArrayList<>(visited), 0, "Visiting " + node.value));
+        dfsRB((RBNode<Integer>)node.left, nil, snap, frames, visited);
+        dfsRB((RBNode<Integer>)node.right, nil, snap, frames, visited);
+    }
+
+    private void searchBin(com.example.oop_20252.model.core.INode<Integer> node, int target, TreeSnapshot snap, List<StepFrame> frames, List<Integer> visited, Object nil) {
+        if (node == null || node == nil) {
+            frames.add(new StepFrame(snap, List.of(), new ArrayList<>(visited), 0, "Not found: " + target));
+            return;
+        }
+        visited.add(node.getValue());
+        frames.add(new StepFrame(snap, List.of(node.getValue()), new ArrayList<>(visited), 0, "Checking " + node.getValue()));
+        if (target == node.getValue()) {
+            frames.add(new StepFrame(snap, List.of(node.getValue()), new ArrayList<>(visited), 0, "Found " + target));
+            return;
+        }
+        if (target < node.getValue()) {
+            searchBin(((com.example.oop_20252.model.binary.BinaryNode<Integer>)node).left, target, snap, frames, visited, nil);
+        } else {
+            searchBin(((com.example.oop_20252.model.binary.BinaryNode<Integer>)node).right, target, snap, frames, visited, nil);
+        }
     }
 }
