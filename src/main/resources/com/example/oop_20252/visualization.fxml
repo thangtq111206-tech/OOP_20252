@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.oop_20252.controller.VisualizationController"
+            stylesheets="@app.css"
+            styleClass="vis-root"
+            fx:id="rootPane">
+</BorderPane>
