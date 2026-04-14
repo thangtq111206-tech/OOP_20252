@@ -1,8 +1,8 @@
 package com.example.oop_20252.model;
 
 public enum TreeKind {
-    GENERIC,
-    BINARY,
+    N_ARY,
+    BST,
+    AVL,
     RED_BLACK
 }
-

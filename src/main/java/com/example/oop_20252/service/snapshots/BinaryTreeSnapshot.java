@@ -1,22 +1,23 @@
 package com.example.oop_20252.service.snapshots;
 
 import com.example.oop_20252.model.TreeKind;
-import com.example.oop_20252.model.binary.BinarySearchTree;
+import com.example.oop_20252.model.binary.BinaryNode;
 
 public class BinaryTreeSnapshot implements TreeSnapshot {
-    private final BinarySearchTree.Node root;
+    private final BinaryNode<Integer> root;
+    private final TreeKind kind;
 
-    public BinaryTreeSnapshot(BinarySearchTree.Node root) {
+    public BinaryTreeSnapshot(BinaryNode<Integer> root, TreeKind kind) {
         this.root = root;
+        this.kind = kind;
     }
 
     @Override
     public TreeKind getKind() {
-        return TreeKind.BINARY;
+        return kind;
     }
 
-    public BinarySearchTree.Node getRoot() {
+    public BinaryNode<Integer> getRoot() {
         return root;
     }
 }
-

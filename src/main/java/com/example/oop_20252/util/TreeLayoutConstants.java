@@ -5,7 +5,7 @@ package com.example.oop_20252.util;
  */
 public final class TreeLayoutConstants {
 
-    public static final double NODE_RADIUS = 18;
+    public static final double NODE_RADIUS = 20;
     public static final double X_SPACING = 70;
     public static final double Y_SPACING = 80;
 

@@ -17,7 +17,9 @@ public class MainMenuController {
     @FXML
     private Button btnGeneric;
     @FXML
-    private Button btnBinary;
+    private Button btnBST;
+    @FXML
+    private Button btnAVL;
     @FXML
     private Button btnRB;
     @FXML
@@ -25,12 +27,17 @@ public class MainMenuController {
 
     @FXML
     private void onSelectGeneric() throws IOException {
-        goToVisualization(TreeKind.GENERIC);
+        goToVisualization(TreeKind.N_ARY);
     }
 
     @FXML
-    private void onSelectBinary() throws IOException {
-        goToVisualization(TreeKind.BINARY);
+    private void onSelectBST() throws IOException {
+        goToVisualization(TreeKind.BST);
+    }
+
+    @FXML
+    private void onSelectAVL() throws IOException {
+        goToVisualization(TreeKind.AVL);
     }
 
     @FXML

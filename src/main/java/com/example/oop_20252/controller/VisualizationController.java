@@ -5,13 +5,16 @@ import com.example.oop_20252.service.OperationService;
 import com.example.oop_20252.service.frames.OperationResult;
 import com.example.oop_20252.service.frames.StepFrame;
 import com.example.oop_20252.service.snapshots.TreeSnapshot;
-import com.example.oop_20252.service.snapshots.GenericTreeSnapshot;
+import com.example.oop_20252.service.snapshots.NaryTreeSnapshot;
 import com.example.oop_20252.service.snapshots.BinaryTreeSnapshot;
 import com.example.oop_20252.service.snapshots.RedBlackTreeSnapshot;
-import com.example.oop_20252.model.generic.GenericTree;
-import com.example.oop_20252.model.binary.BinarySearchTree;
-import com.example.oop_20252.model.redblack.RedBlackTree;
+import com.example.oop_20252.model.multichild.NaryTree;
+import com.example.oop_20252.model.binary.BST;
+import com.example.oop_20252.model.binary.AVLTree;
+import com.example.oop_20252.model.redblack.RBTree;
+import com.example.oop_20252.model.redblack.RBNode;
 import com.example.oop_20252.util.ListFormatUtil;
+
 import com.example.oop_20252.view.CodePanel;
 import com.example.oop_20252.view.TreePanel;
 import javafx.animation.KeyFrame;
@@ -20,11 +23,14 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -32,52 +38,35 @@ import java.util.List;
 
 public class VisualizationController {
 
-    @FXML
-    private TreePanel treePanel;
-    @FXML
-    private CodePanel codePanel;
+    @FXML private TreePanel treePanel;
+    @FXML private CodePanel codePanel;
 
-    @FXML
-    private ComboBox<String> operationChoice;
-    @FXML
-    private TextField parentValueField;
-    @FXML
-    private TextField valueField;
-    @FXML
-    private TextField newValueField;
-    @FXML
-    private ComboBox<String> traverseChoice;
+    @FXML private ComboBox<String> operationChoice;
+    @FXML private TextField parentValueField;
+    @FXML private TextField valueField;
+    @FXML private TextField newValueField;
+    @FXML private ComboBox<String> traverseChoice;
+    @FXML private ComboBox<String> rbDeleteModeChoice;
+    @FXML private CheckBox showNilLeavesCheck;
+    @FXML private ComboBox<String> binarySubtypeChoice;
 
-    @FXML
-    private Button btnRun;
-    @FXML
-    private Button btnPause;
-    @FXML
-    private Button btnContinue;
-    @FXML
-    private Button btnStepBack;
-    @FXML
-    private Button btnStepForward;
-    @FXML
-    private Button btnUndo;
-    @FXML
-    private Button btnRedo;
-    @FXML
-    private Button btnBack;
+    @FXML private Button btnRun;
+    @FXML private Button btnPause;
+    @FXML private Button btnContinue;
+    @FXML private Button btnStepBack;
+    @FXML private Button btnStepForward;
+    @FXML private Button btnUndo;
+    @FXML private Button btnRedo;
+    @FXML private Button btnBack;
 
-    @FXML
-    private ProgressBar progressBar;
-    @FXML
-    private Label statusLabel;
-    @FXML
-    private Label traversalOrderLabel;
+    @FXML private ProgressBar progressBar;
+    @FXML private Label statusLabel;
+    @FXML private Label traversalOrderLabel;
 
-    @FXML
-    private javafx.scene.control.Slider speedSlider;
-    @FXML
-    private Label titleLabel;
+    @FXML private javafx.scene.control.Slider speedSlider;
+    @FXML private Label titleLabel;
 
-    private TreeKind treeKind = TreeKind.GENERIC;
+    private TreeKind treeKind = TreeKind.N_ARY;
     private final OperationService operationService = new OperationService();
 
     private List<TreeSnapshot> history = new ArrayList<>();
@@ -89,14 +78,35 @@ public class VisualizationController {
 
     public void setTreeKind(TreeKind kind) {
         this.treeKind = kind;
-        titleLabel.setText("Tree: " + kind);
+        if (kind == TreeKind.BST || kind == TreeKind.AVL) {
+            titleLabel.setText("Binary Search Family");
+        } else {
+            titleLabel.setText(kind == TreeKind.N_ARY ? "N-ary Tree" : "Red-Black Tree");
+        }
         setupChoices();
         resetToEmptyTree();
+        if (showNilLeavesCheck != null) {
+            showNilLeavesCheck.setDisable(kind != TreeKind.RED_BLACK);
+            showNilLeavesCheck.setSelected(false);
+        }
+        if (treePanel != null) {
+            treePanel.setShowNilLeaves(false);
+        }
     }
 
     @FXML
     private void initialize() {
-        // FXML initialize hook; choices are set after setTreeKind.
+        if (binarySubtypeChoice != null) {
+            binarySubtypeChoice.getItems().addAll("BST", "AVL");
+            binarySubtypeChoice.setOnAction(e -> {
+                String val = binarySubtypeChoice.getValue();
+                if ("AVL".equals(val) && treeKind != TreeKind.AVL) {
+                    setTreeKind(TreeKind.AVL);
+                } else if ("BST".equals(val) && treeKind != TreeKind.BST) {
+                    setTreeKind(TreeKind.BST);
+                }
+            });
+        }
     }
 
     private void setupChoices() {
@@ -107,6 +117,24 @@ public class VisualizationController {
         traverseChoice.getItems().clear();
         traverseChoice.getItems().addAll("DFS", "BFS");
         traverseChoice.getSelectionModel().select("DFS");
+
+        if (rbDeleteModeChoice != null) {
+            rbDeleteModeChoice.getItems().clear();
+            rbDeleteModeChoice.getItems().addAll("Immediate", "Step-by-step");
+            rbDeleteModeChoice.getSelectionModel().select("Immediate");
+            rbDeleteModeChoice.setDisable(treeKind != TreeKind.RED_BLACK);
+        }
+
+        if (binarySubtypeChoice != null) {
+            if (treeKind == TreeKind.BST || treeKind == TreeKind.AVL) {
+                binarySubtypeChoice.setVisible(true);
+                binarySubtypeChoice.setManaged(true);
+                binarySubtypeChoice.setValue(treeKind == TreeKind.AVL ? "AVL" : "BST");
+            } else {
+                binarySubtypeChoice.setVisible(false);
+                binarySubtypeChoice.setManaged(false);
+            }
+        }
     }
 
     private void resetToEmptyTree() {
@@ -120,25 +148,42 @@ public class VisualizationController {
         codePanel.setCodeLines(new String[0]);
         progressBar.setProgress(0);
         renderSnapshot(empty);
-        statusLabel.setText("Ready. Choose an operation and click Run.");
+        statusLabel.setText("Ready. Choose an operation and click Execute.");
     }
 
     private TreeSnapshot createEmptySnapshot(TreeKind kind) {
-        if (kind == TreeKind.GENERIC) {
-            GenericTree t = new GenericTree();
-            return new GenericTreeSnapshot(t.deepCopy().getRoot());
+        if (kind == TreeKind.N_ARY) {
+            NaryTree<Integer> t = new NaryTree<>();
+            return new NaryTreeSnapshot(t.deepCopy().getRoot());
         }
-        if (kind == TreeKind.BINARY) {
-            BinarySearchTree t = new BinarySearchTree();
-            return new BinaryTreeSnapshot(t.deepCopy().getRoot());
+        if (kind == TreeKind.BST) {
+            BST<Integer> t = new BST<>();
+            return new BinaryTreeSnapshot(t.deepCopy().getRoot(), TreeKind.BST);
         }
-        RedBlackTree t = new RedBlackTree();
-        RedBlackTree copy = t.deepCopy();
-        return new RedBlackTreeSnapshot(copy.getRoot(), copy.getNil());
+        if (kind == TreeKind.AVL) {
+            AVLTree<Integer> t = new AVLTree<>();
+            return new BinaryTreeSnapshot(t.deepCopy().getRoot(), TreeKind.AVL);
+        }
+        RBTree<Integer> t = new RBTree<>();
+        RBTree<Integer> copy = t.deepCopy();
+        return new RedBlackTreeSnapshot((RBNode<Integer>)copy.getRoot(), copy.getNil());
     }
 
     private void renderSnapshot(TreeSnapshot snapshot) {
-        treePanel.render(snapshot, List.of(), List.of());
+        treePanel.render(snapshot, List.of(), List.of(), 0);
+    }
+
+    @FXML
+    private void onCopyJson() {
+        if (activeFrames == null || activeFrames.isEmpty()) {
+            showError("No timeline to export.");
+            return;
+        }
+        String json = "{}";
+        ClipboardContent content = new ClipboardContent();
+        content.putString(json);
+        Clipboard.getSystemClipboard().setContent(content);
+        statusLabel.setText("Copied JSON timeline.");
     }
 
     @FXML
@@ -146,7 +191,7 @@ public class VisualizationController {
         stopPlayback();
         try {
             var loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/oop_20252/main-menu.fxml"));
-            var scene = new javafx.scene.Scene(loader.load(), 720, 500);
+            var scene = new javafx.scene.Scene(loader.load(), 1200, 760);
             var stage = (javafx.stage.Stage) btnBack.getScene().getWindow();
             stage.setScene(scene);
             stage.show();
@@ -159,8 +204,6 @@ public class VisualizationController {
     @FXML
     private void onRun(ActionEvent e) {
         if (activeFrames != null && frameIndex < activeFrames.size() - 1) {
-            // If the user started stepping through an operation, commit the visual to the last frame
-            // before starting a new operation (so history remains consistent).
             setFrame(activeFrames.size() - 1);
         }
         stopPlayback();
@@ -176,16 +219,18 @@ public class VisualizationController {
                 case "Create" -> result = operationService.create(treeKind, current);
                 case "Insert" -> {
                     Integer parent = parseNullableInt(parentValueField.getText());
-                    int newValue = parseIntOrThrow(valueField.getText(), "New node value is required for Insert.");
+                    int newValue = parseIntOrThrow(valueField.getText(), "Value required.");
                     result = operationService.insert(treeKind, current, parent, newValue);
                 }
                 case "Delete" -> {
-                    int v = parseIntOrThrow(valueField.getText(), "Node value is required for Delete.");
-                    result = operationService.delete(treeKind, current, v);
+                    int v = parseIntOrThrow(valueField.getText(), "Value required.");
+                    boolean detailedRbDelete = rbDeleteModeChoice != null
+                            && "Step-by-step".equalsIgnoreCase(rbDeleteModeChoice.getValue());
+                    result = operationService.delete(treeKind, current, v, detailedRbDelete);
                 }
                 case "Update" -> {
-                    int oldV = parseIntOrThrow(valueField.getText(), "Old value is required for Update.");
-                    int newV = parseIntOrThrow(newValueField.getText(), "New value is required for Update.");
+                    int oldV = parseIntOrThrow(valueField.getText(), "Old required.");
+                    int newV = parseIntOrThrow(newValueField.getText(), "New required.");
                     result = operationService.update(treeKind, current, oldV, newV);
                 }
                 case "Traverse" -> {
@@ -193,25 +238,20 @@ public class VisualizationController {
                     result = operationService.traverse(treeKind, current, bfs);
                 }
                 case "Search" -> {
-                    int v = parseIntOrThrow(valueField.getText(), "Search value is required for Search.");
+                    int v = parseIntOrThrow(valueField.getText(), "Value required.");
                     result = operationService.search(treeKind, current, v);
                 }
-                default -> {
-                    return;
-                }
+                default -> { return; }
             }
 
             setActiveOperation(result);
-        } catch (NumberFormatException ex) {
-            showError(ex.getMessage() == null ? "Invalid number." : ex.getMessage());
         } catch (Exception ex) {
             ex.printStackTrace();
-            showError("Operation failed: " + ex.getMessage());
+            showError("Op failed: " + ex.getMessage());
         }
     }
 
     private void setActiveOperation(OperationResult result) {
-        // Truncate redo history if we were in an "undo" state.
         while (history.size() - 1 > historyIndex) {
             history.remove(history.size() - 1);
         }
@@ -220,16 +260,13 @@ public class VisualizationController {
         frameIndex = 0;
         codePanel.setCodeLines(result.getCodeLines());
 
-        // Commit end state to history for undo/redo.
-        TreeSnapshot endSnapshot = activeFrames.isEmpty() ? history.get(historyIndex) : activeFrames.get(activeFrames.size() - 1).getSnapshot();
+        TreeSnapshot endSnapshot = activeFrames.isEmpty() ? history.get(historyIndex)
+                : activeFrames.get(activeFrames.size() - 1).getSnapshot();
         history.add(endSnapshot);
         historyIndex = history.size() - 1;
 
         setFrame(0);
         statusLabel.setText(result.getTitle() + " started.");
-
-        // Auto-play so users immediately see changes.
-        // They can still pause or step manually at any time.
         onContinue();
     }
 
@@ -240,7 +277,8 @@ public class VisualizationController {
         frameIndex = index;
 
         StepFrame frame = activeFrames.get(frameIndex);
-        treePanel.render(frame.getSnapshot(), frame.getHighlightValues(), frame.getVisitedValues());
+        double durationMs = speedSlider.getValue() * 0.9;
+        treePanel.render(frame.getSnapshot(), frame.getHighlightValues(), frame.getVisitedValues(), durationMs);
         codePanel.highlightLine(frame.getCodeLineIndex());
         statusLabel.setText(frame.getStatusText());
         if (traversalOrderLabel != null) {
@@ -298,14 +336,12 @@ public class VisualizationController {
         activeFrames = null;
         codePanel.setCodeLines(new String[0]);
 
-        if (historyIndex > 0) {
-            historyIndex--;
-        }
+        if (historyIndex > 0) historyIndex--;
         TreeSnapshot snapshot = history.get(historyIndex);
         frameIndex = 0;
         progressBar.setProgress(0);
         renderSnapshot(snapshot);
-        statusLabel.setText("Undo to previous operation.");
+        statusLabel.setText("Undo to previous state.");
     }
 
     @FXML
@@ -314,9 +350,7 @@ public class VisualizationController {
         activeFrames = null;
         codePanel.setCodeLines(new String[0]);
 
-        if (historyIndex < history.size() - 1) {
-            historyIndex++;
-        }
+        if (historyIndex < history.size() - 1) historyIndex++;
         TreeSnapshot snapshot = history.get(historyIndex);
         frameIndex = 0;
         progressBar.setProgress(0);
@@ -345,6 +379,4 @@ public class VisualizationController {
         alert.setContentText(message == null ? "Invalid input." : message);
         alert.showAndWait();
     }
-
 }
-

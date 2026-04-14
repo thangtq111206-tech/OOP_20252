@@ -1,13 +1,13 @@
 package com.example.oop_20252.service.snapshots;
 
 import com.example.oop_20252.model.TreeKind;
-import com.example.oop_20252.model.redblack.RedBlackTree;
+import com.example.oop_20252.model.redblack.RBNode;
 
 public class RedBlackTreeSnapshot implements TreeSnapshot {
-    private final RedBlackTree.Node root;
-    private final RedBlackTree.Node nil;
+    private final RBNode<Integer> root;
+    private final RBNode<Integer> nil;
 
-    public RedBlackTreeSnapshot(RedBlackTree.Node root, RedBlackTree.Node nil) {
+    public RedBlackTreeSnapshot(RBNode<Integer> root, RBNode<Integer> nil) {
         this.root = root;
         this.nil = nil;
     }
@@ -17,12 +17,11 @@ public class RedBlackTreeSnapshot implements TreeSnapshot {
         return TreeKind.RED_BLACK;
     }
 
-    public RedBlackTree.Node getRoot() {
+    public RBNode<Integer> getRoot() {
         return root;
     }
 
-    public RedBlackTree.Node getNil() {
+    public RBNode<Integer> getNil() {
         return nil;
     }
 }
-
